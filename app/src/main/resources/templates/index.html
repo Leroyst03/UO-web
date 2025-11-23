@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LetrasUO - Publicaciones Académicas</title>
+    <link th:href="@{/css/estilos.css}" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Page Transition -->
+    <div class="page-transition" id="pageTransition">
+        <div class="transition-content">
+            <i class="fas fa-book-open fa-3x"></i>
+            <p>Cargando...</p>
+        </div>
+    </div>
+
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-book-open logo-icon"></i>
+                <h1 class="logo-text">LetrasUO</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="/" onclick="navigateTo('home'); return false;">Inicio</a></li>
+                    <li><a href="/publicaciones" onclick="navigateTo('publicaciones'); return false;">Publicaciones</a></li>
+                    <li><a href="/soporte" onclick="navigateTo('soporte'); return false;">Soporte</a></li>
+                </ul>
+            </nav>
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="close-menu" id="closeMenuBtn">
+            <i class="fas fa-times"></i>
+        </button>
+        <ul>
+            <li><a href="/" onclick="navigateTo('home'); return false;">Inicio</a></li>
+            <li><a href="/publicaciones" onclick="navigateTo('publicaciones'); return false;">Publicaciones</a></li>
+            <li><a href="/soporte" onclick="navigateTo('soporte'); return false;">Soporte</a></li>
+        </ul>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="homeSection">
+        <div class="floating-elements">
+            <div class="floating-element"><i class="fas fa-feather-alt"></i></div>
+            <div class="floating-element"><i class="fas fa-quill"></i></div>
+            <div class="floating-element"><i class="fas fa-book"></i></div>
+            <div class="floating-element"><i class="fas fa-pen-fancy"></i></div>
+        </div>
+        <div class="hero-content">
+            <h1>El Universo de las Letras te Espera</h1>
+            <p>Explora artículos, ensayos y reflexiones que te transportarán a través de los mundos creados por las palabras.</p>
+            <div class="cta-buttons">
+                <a href="#" class="btn btn-primary" onclick="navigateTo('publicaciones'); return false;">Explorar Publicaciones</a>
+                <a href="#" class="btn btn-secondary" onclick="navigateTo('soporte'); return false;">Contacto</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Publicaciones Section -->
+    <main id="publicacionesSection" style="display: none;">
+        <div class="container">
+            <div class="section-title">
+                <h2>Publicaciones Académicas</h2>
+                <p>Explora los últimos trabajos de nuestra comunidad académica</p>
+            </div>
+            <div id="lista-publicaciones" class="grid">
+                <!-- Las publicaciones se cargarán dinámicamente desde el backend -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Soporte Section -->
+    <section class="support-section" id="supportSection" style="display: none;">
+        <div class="container">
+            <div class="section-title">
+                <h2>Soporte y Contacto</h2>
+            </div>
+            <div class="support-container">
+                <div class="support-card">
+                    <i class="fas fa-phone-alt support-icon"></i>
+                    <h3 class="support-title">Contacto Telefónico</h3>
+                    <p class="support-info">Profesor Alejandro: +53 53630284</p>
+                </div>
+                <div class="support-card">
+                    <i class="fas fa-map-marker-alt support-icon"></i>
+                    <h3 class="support-title">Ubicación</h3>
+                    <p class="support-info">25VM+C34, Santiago de Cuba, Cuba</p>
+                </div>
+                <div class="support-card">
+                    <i class="fas fa-hashtag support-icon"></i>
+                    <h3 class="support-title">Redes Sociales</h3>
+                    <div class="social-links">
+                        <a href="https://www.facebook.com/tupagina" class="social-link facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.instagram.com/tupagina" class="social-link instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link whatsapp"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">LetrasUO</div>
+                <p>El portal definitivo para amantes de la literatura.</p>
+                <div class="footer-links">
+                    <a href="#" class="footer-link" onclick="navigateTo('home'); return false;">Inicio</a>
+                    <a href="#" class="footer-link" onclick="navigateTo('publicaciones'); return false;">Publicaciones</a>
+                    <a href="#" class="footer-link" onclick="navigateTo('soporte'); return false;">Soporte</a>
+                </div>
+                <p class="copyright">&copy; POWERED BY LEROY SOTOMAYOR & ERICK SÁNCHEZ</p>
+                <p class="copyright">&copy; 2025 LetrasUO</p>
+            </div>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/publicaciones.js}"></script>
+</body>
+</html>

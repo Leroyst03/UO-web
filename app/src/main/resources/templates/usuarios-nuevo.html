@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alta de Usuario - LetrasUO</title>
+    <link th:href="@{/css/dashboard.css}" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<header>
+    <h1>Alta de Usuario</h1>
+    <nav>
+        <a th:href="@{/dashboard}" class="btn">
+            <i class="fas fa-arrow-left"></i> Volver al dashboard
+        </a>
+    </nav>
+</header>
+
+<main>
+    <section>
+        <h3><i class="fas fa-user-plus"></i> Crear Nuevo Usuario</h3>
+        <form id="signUpForm" class="dashboard-form">
+            <div class="form-group">
+                <label for="nombre">
+                    <i class="fas fa-user"></i> Nombre de Usuario
+                </label>
+                <input type="text" id="nombre" name="nombre" class="form-control" 
+                       placeholder="Ingresa el nombre de usuario" required />
+            </div>
+
+            <div class="form-group">
+                <label for="password">
+                    <i class="fas fa-lock"></i> Contraseña
+                </label>
+                <input type="password" id="password" name="password" class="form-control" 
+                       placeholder="Ingresa la contraseña" required />
+            </div>
+
+            <div class="form-group">
+                <label for="rol">
+                    <i class="fas fa-user-tag"></i> Rol del Usuario
+                </label>
+                <select id="rol" name="rol" class="form-control" required>
+                    <option value="">Selecciona un rol</option>
+                    <option value="PROFESOR">Profesor</option>
+                    <option value="ALUMNO">Alumno</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-user-plus"></i> Crear Usuario
+            </button>
+
+            <p id="msg" aria-live="polite" class="message"></p>
+        </form>
+    </section>
+</main>
+
+<footer>
+    <p class="copyright">&copy; POWERED BY LEROY SOTOMAYOR & ERICK SÁNCHEZ</p>
+    <p>&copy; 2025 - Plataforma Educativa LetrasUO</p>
+</footer>
+
+<script>
+document.getElementById("signUpForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    
+    // Mostrar estado de carga
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando usuario...';
+    submitBtn.disabled = true;
+    
+    const payload = {
+        nombre: document.getElementById("nombre").value,
+        password: document.getElementById("password").value,
+        role: document.getElementById("rol").value // CORREGIDO: usa "role" en lugar de "rol"
+    };
+
+    try {
+        const res = await fetch("/auth/sign-up", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+            credentials: "include"
+        });
+        
+        const msg = document.getElementById("msg");
+        if (res.ok) {
+            msg.textContent = "✅ Usuario creado correctamente.";
+            msg.className = "message success";
+            e.target.reset();
+            
+            // Redirigir después de 2 segundos
+            setTimeout(() => {
+                window.location.href = "/dashboard";
+            }, 2000);
+        } else if (res.status === 403 || res.status === 401) {
+            msg.textContent = "❌ No autorizado para crear usuarios.";
+            msg.className = "message error";
+        } else {
+            const text = await res.text().catch(()=>"Error desconocido");
+            msg.textContent = "❌ Error al crear usuario: " + text;
+            msg.className = "message error";
+        }
+    } catch (err) {
+        const msg = document.getElementById("msg");
+        msg.textContent = "❌ Error de conexión. Verifica tu conexión a internet.";
+        msg.className = "message error";
+    } finally {
+        // Restaurar botón
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }
+});
+
+// Mejorar la experiencia del formulario
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('signUpForm');
+    const inputs = form.querySelectorAll('input, select');
+    
+    inputs.forEach(input => {
+        // Agregar foco automático al primer campo
+        if (input === inputs[0]) {
+            input.focus();
+        }
+        
+        // Limpiar mensajes cuando el usuario empiece a escribir
+        input.addEventListener('input', function() {
+            const msg = document.getElementById('msg');
+            if (msg.textContent) {
+                msg.textContent = '';
+                msg.className = 'message';
+            }
+        });
+    });
+});
+</script>
+
+<style>
+/* Estilos específicos para la página de alta de usuario */
+.message {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 600;
+    text-align: center;
+    transition: var(--transition);
+}
+
+.message.success {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+    border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.message.error {
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+    border: 1px solid rgba(220, 53, 69, 0.3);
+}
+
+/* Mejoras específicas para el formulario de usuario */
+.dashboard-form {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.form-group label i {
+    color: var(--accent-color);
+    width: 16px;
+}
+
+select.form-control {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'><path fill='%238C6D46' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 0.7rem top 50%;
+    background-size: 0.65rem auto;
+    padding-right: 2.5rem;
+}
+
+select.form-control:focus {
+    background-image: url("data:image/svg+xml;charset=US-ASCII,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'><path fill='%23B38B59' d='M2 0L0 2h4zm0 5L0 3h4z'/></svg>");
+}
+
+/* Animación suave para el mensaje */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.message {
+    animation: slideDown 0.3s ease;
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+    .dashboard-form {
+        max-width: 100%;
+    }
+    
+    .form-group label {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+}
+</style>
+</body>
+</html>

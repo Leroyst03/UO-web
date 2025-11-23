@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard - LetrasUO</title>
+    <link th:href="@{/css/dashboard.css}" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<header>
+    <h1>Panel de Control Académico</h1>
+    <nav>
+        <a href="#" id="logoutBtn">
+            <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+        </a>
+        <a th:if="${rol == 'ROLE_PROFESOR'}" th:href="@{/usuarios/nuevo}" class="btn">
+            <i class="fas fa-user-plus"></i> Alta de usuario
+        </a>
+    </nav>
+</header>
+
+<main>
+    <h2 th:text="'Bienvenido, ' + ${rol}"></h2>
+
+    <!-- Crear nueva publicación (visible para todos) -->
+    <section>
+        <h3>Crear Nueva Publicación</h3>
+        <form id="createForm">
+            <input type="text" id="titulo" name="titulo" placeholder="Título de la publicación" required />
+            <input type="text" id="grupo" name="grupo" placeholder="Grupo (ej: Literatura, Poesía, etc.)" required />
+            <textarea id="texto" name="texto" placeholder="Escribe el contenido de tu publicación aquí..." required></textarea>
+            <button type="submit" class="btn">
+                <i class="fas fa-paper-plane"></i> Publicar
+            </button>
+        </form>
+    </section>
+
+    <!-- Lista de publicaciones -->
+    <section>
+        <h3>Publicaciones Recientes</h3>
+        <ul id="pubList">
+            <li th:each="pub : ${publicaciones}">
+                <article>
+                    <h4 th:text="${pub.titulo}"></h4>
+                    <p class="grupo" th:text="'Grupo: ' + ${pub.grupo}"></p>
+                    <p th:text="${pub.texto}"></p>
+                    <div class="acciones">
+                        <!-- Botón editar: siempre disponible -->
+                        <button type="button" class="btn edit-btn"
+                                th:data-id="${pub.id}"
+                                th:data-titulo="${pub.titulo}"
+                                th:data-grupo="${pub.grupo}"
+                                th:data-texto="${pub.texto}">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+
+                        <!-- Botón borrar: solo visible si es profesor -->
+                        <button th:if="${rol == 'ROLE_PROFESOR'}"
+                                type="button"
+                                class="btn btn-danger delete-btn"
+                                th:data-id="${pub.id}">
+                            <i class="fas fa-trash"></i> Borrar
+                        </button>
+                    </div>
+                </article>
+            </li>
+        </ul>
+    </section>
+</main>
+
+<footer>
+    <p class="copyright">&copy; POWERED BY LEROY SOTOMAYOR & ERICK SÁNCHEZ</p>
+    <p>&copy; 2025 - Plataforma Educativa LetrasUO</p>
+</footer>
+
+<!-- Modal para edición -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <button id="closeModal" class="close">&times;</button>
+        <h3>Editar Publicación</h3>
+        <form id="editForm">
+            <input type="hidden" id="pubId" name="id" />
+            <input type="text" id="editTitulo" name="titulo" placeholder="Título" required />
+            <input type="text" id="editGrupo" name="grupo" placeholder="Grupo" required />
+            <textarea id="editTexto" name="texto" placeholder="Contenido de la publicación" required></textarea>
+            <button type="submit" class="btn">
+                <i class="fas fa-save"></i> Guardar cambios
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.getElementById("logoutBtn").addEventListener("click", async (e) => {
+        e.preventDefault();
+        try {
+            const res = await fetch("/auth/logout", {
+                method: "POST",
+                credentials: "include"
+            });
+            if (res.ok) {
+                window.location.href = "/";
+            } else {
+                alert("Error al cerrar sesión");
+            }
+        } catch (err) {
+            alert("Error de conexión al cerrar sesión");
+        }
+    });
+
+    document.getElementById("closeModal").addEventListener("click", () => {
+        document.getElementById("editModal").style.display = "none";
+    });
+
+    document.getElementById("editForm").addEventListener("submit", async e => {
+        e.preventDefault();
+        const id = document.getElementById("pubId").value;
+        const titulo = document.getElementById("editTitulo").value;
+        const grupo = document.getElementById("editGrupo").value;
+        const texto = document.getElementById("editTexto").value;
+
+        const res = await fetch("/api/publicaciones", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id, titulo, grupo, texto }),
+            credentials: "include"
+        });
+
+        if (res.ok) {
+            location.reload();
+        } else {
+            alert("Error al actualizar publicación");
+        }
+    });
+
+    document.getElementById("createForm").addEventListener("submit", async e => {
+        e.preventDefault();
+        const titulo = document.getElementById("titulo").value;
+        const grupo = document.getElementById("grupo").value;
+        const texto = document.getElementById("texto").value;
+
+        const res = await fetch("/api/publicaciones", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ titulo, grupo, texto }),
+            credentials: "include"
+        });
+
+        if (res.ok) {
+            location.reload();
+        } else {
+            alert("Error al crear publicación");
+        }
+    });
+
+    document.querySelectorAll(".delete-btn").forEach(btn => {
+        btn.addEventListener("click", async () => {
+            if (confirm("¿Estás seguro de que quieres eliminar esta publicación?")) {
+                const id = btn.dataset.id;
+                const res = await fetch(`/api/publicaciones/${id}`, {
+                    method: "DELETE",
+                    credentials: "include"
+                });
+                if (res.ok) {
+                    location.reload();
+                } else {
+                    alert("Error al eliminar publicación");
+                }
+            }
+        });
+    });
+
+    document.querySelectorAll(".edit-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            document.getElementById("pubId").value = btn.dataset.id;
+            document.getElementById("editTitulo").value = btn.dataset.titulo;
+            document.getElementById("editGrupo").value = btn.dataset.grupo;
+            document.getElementById("editTexto").value = btn.dataset.texto;
+            document.getElementById("editModal").style.display = "flex";
+        });
+    });
+</script>
+
+<style>
+/* Estilos adicionales para el campo grupo */
+.grupo {
+    font-style: italic;
+    color: #666;
+    font-size: 0.9em;
+    margin-bottom: 0.5rem;
+}
+
+#grupo, #editGrupo {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: 'Source Sans Pro', sans-serif;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#grupo:focus, #editGrupo:focus {
+    outline: none;
+    border-color: #8C6D46;
+    box-shadow: 0 0 0 2px rgba(140, 109, 70, 0.2);
+}
+</style>
+</body>
+</html>

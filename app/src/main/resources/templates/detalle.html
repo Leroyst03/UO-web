@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${publicacion.titulo} + ' - LetrasUO'">Detalle publicación</title>
+    <link th:href="@{/css/estilos.css}" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="detail-header">
+        <div class="header-content">
+            <h1 th:text="${publicacion.titulo}">Título de la publicación</h1>
+            <nav>
+                <a th:href="@{/}">
+                    <i class="fas fa-arrow-left"></i> Volver al listado
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="detail-main">
+        <article class="card expanded">
+            <div class="article-header">
+                <h1 th:text="${publicacion.titulo}">Título de la publicación</h1>
+                <div class="article-meta">
+                    <div>
+                        <i class="fas fa-user"></i>
+                        <span th:text="${publicacion.autor}">Autor</span>
+                    </div>
+                    <div>
+                        <i class="fas fa-users"></i>
+                        <span th:text="${publicacion.grupo}">Grupo</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="article-content">
+                <p th:text="${publicacion.texto}">Texto completo de la publicación...</p>
+            </div>
+            
+            <div class="article-footer">
+                <small>
+                    <div class="author-info">
+                        <div class="author-avatar large" th:text="${#strings.substring(publicacion.autor, 0, 2)}">AU</div>
+                        <div>
+                            <strong th:text="${publicacion.autor}">Autor</strong><br>
+                            <span th:text="${publicacion.grupo}">Grupo de investigación</span>
+                        </div>
+                    </div>
+                </small>
+            </div>
+        </article>
+    </main>
+
+    <button class="reading-mode" onclick="toggleReadingMode()" title="Modo lectura concentrada">
+        <i class="fas fa-expand"></i>
+    </button>
+
+    <script>
+        function toggleReadingMode() {
+            document.body.classList.toggle('concentrated-reading');
+            const btn = document.querySelector('.reading-mode');
+            const icon = btn.querySelector('i');
+            
+            if (document.body.classList.contains('concentrated-reading')) {
+                icon.className = 'fas fa-compress';
+                btn.title = 'Salir del modo lectura';
+            } else {
+                icon.className = 'fas fa-expand';
+                btn.title = 'Modo lectura concentrada';
+            }
+        }
+    </script>
+</body>
+</html>
