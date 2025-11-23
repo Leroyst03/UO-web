@@ -146,7 +146,7 @@ body {
 
 .form-control {
     width: 100%;
-    padding: 1rem 1rem 1rem 3rem; /* Espacio extra a la izquierda para el icono */
+    padding: 1rem 3rem 1rem 3rem; /* Espacio para iconos a ambos lados */
     border: 1px solid #ddd;
     border-radius: var(--border-radius);
     font-size: 1rem;
@@ -161,6 +161,38 @@ body {
     border-color: var(--accent-color);
     box-shadow: 0 0 0 3px rgba(179, 139, 89, 0.1);
     background: white;
+}
+
+/* Botón de mostrar/ocultar contraseña */
+.password-toggle {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--secondary-color);
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: var(--transition);
+    z-index: 3;
+    padding: 0.25rem;
+    border-radius: 4px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.password-toggle:hover {
+    color: var(--accent-color);
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.password-toggle:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
 }
 
 /* Botón de login */
@@ -265,11 +297,15 @@ body {
     }
     
     .form-control {
-        padding: 0.9rem 0.9rem 0.9rem 2.8rem;
+        padding: 0.9rem 2.8rem 0.9rem 2.8rem;
     }
     
     .input-with-icon i {
         left: 0.9rem;
+    }
+    
+    .password-toggle {
+        right: 0.9rem;
     }
 }
 
