@@ -77,5 +77,5 @@ Esto es el repositorio de una página web para la facultad de letras de la Unive
 │                   └── app
 │                       └── AppApplicationTests.java
 ```
-## Documentación sobre el funcionamiento de los endpoinst proximamente...
+## Documentación sobre el funcionamiento de los endpoints proximamente...
 
